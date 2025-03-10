@@ -40,20 +40,7 @@ def create_vector_embedding():
     if "vectors" not in st.session_state:
         st.session_state.embeddings=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         st.session_state.loader=PyPDFDirectoryLoader("research_papers")
-    #     uploaded_files = st.file_uploader("Upload PDF files", type="pdf", accept_multiple_files=True)
-    # ## Process uploaded  PDF's
-    #     if uploaded_files:
-    #         documents=[]
-    #         for uploaded_file in uploaded_files:
-    #             temppdf=f"./temp.pdf"
-    #             with open(temppdf,"wb") as file:
-    #                 file.write(uploaded_file.getvalue())
-    #                 file_name=uploaded_file.name
 
-    #             loader=PyPDFLoader(temppdf)
-    #             docs=loader.load()
-    #             documents.extend(docs)
-# Combine all documents 
         st.session_state.docs=st.session_state.loader.load() ## Document Loading
         st.session_state.text_splitter=RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=200)
         st.session_state.final_documents=st.session_state.text_splitter.split_documents(st.session_state.docs[:50])
@@ -73,9 +60,7 @@ if user_prompt:
     retriever=st.session_state.vectors.as_retriever()
     retrieval_chain=create_retrieval_chain(retriever,document_chain)
 
-    start=time.process_time()
     response=retrieval_chain.invoke({'input':user_prompt})
-    print(f"Response time :{time.process_time()-start}")
 
     st.write(response['answer'])
 
